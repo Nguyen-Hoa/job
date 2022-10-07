@@ -1,6 +1,7 @@
 package job
 
 import (
+	"sync"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -21,6 +22,16 @@ type BaseJob struct {
 type DockerJob struct {
 	BaseJob
 	types.Container
+}
+
+type SharedJobsArray struct {
+	mu   sync.Mutex
+	jobs []Job
+}
+
+type SharedDockerJobsMap struct {
+	mu   sync.Mutex
+	jobs map[string]DockerJob
 }
 
 func (j *BaseJob) UpdateTotalRunTime(time.Time) error {
