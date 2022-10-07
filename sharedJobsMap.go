@@ -1,7 +1,15 @@
 package job
 
 func (j *SharedDockerJobsMap) Init() {
+	j.mu.Lock()
 	j.jobs = make(map[string]DockerJob)
+	j.mu.Unlock()
+}
+
+func (j *SharedDockerJobsMap) InitFromMap(jobs map[string]DockerJob) {
+	j.mu.Lock()
+	j.jobs = jobs
+	j.mu.Unlock()
 }
 
 func (j *SharedDockerJobsMap) Get(key string) (DockerJob, bool) {
