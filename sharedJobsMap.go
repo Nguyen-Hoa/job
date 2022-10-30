@@ -43,9 +43,15 @@ func (j *SharedDockerJobsMap) Exists(key string) bool {
 }
 
 func (j *SharedDockerJobsMap) Refresh(keys []string) {
-	for job := range j.jobs {
-		if !contains(keys, job) {
-			j.Delete(job)
+	key_map := make(map[string]string, len(keys))
+	for _, k := range keys {
+		key_map[k] = k
+	}
+
+	for _, job := range j.jobs {
+		_, exists := key_map[job.ID]
+		if !exists {
+			j.Delete(job.ID)
 		}
 	}
 }
@@ -60,13 +66,4 @@ func (j *SharedDockerJobsMap) Keys() []string {
 
 func (j *SharedDockerJobsMap) Snap() map[string]DockerJob {
 	return j.jobs
-}
-
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }
